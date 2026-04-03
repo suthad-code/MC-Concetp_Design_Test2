@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แบบทดสอบที่ 1: แนวคิดการออกแบบเครื่องจักรกล</title>
+    <!-- ใช้ Tailwind CSS สำหรับจัดรูปแบบให้สวยงามและรองรับมือถือ -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* อนิเมชั่นเล็กน้อยเวลากดเปลี่ยนหน้า */
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* สไตล์สำหรับปุ่มตัวเลือก */
+        .option-btn {
+            transition: all 0.2s;
+        }
+        .option-btn:hover:not(:disabled) {
+            transform: scale(1.02);
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex items-center justify-center p-4">
+
+    <!-- Container หลักของแอป -->
+    <div id="app" class="bg-white rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden fade-in relative">
+        <!-- เนื้อหาจะถูกเรนเดอร์ผ่าน JavaScript ที่นี่ -->
+    </div>
+
+    <script>
+        // ข้อมูลแบบทดสอบ 30 ข้อ (สร้างจากเนื้อหาในเอกสาร)
+        const quizData = [
+            {
+                question: "เป้าหมายสูงสุดของการออกแบบเครื่องจักรกลตามปฐมบทคืออะไร?",
+                options: ["สร้างเครื่องจักรที่ราคาถูกที่สุด", "เปลี่ยนความต้องการของมนุษย์ให้เป็นพิมพ์เขียวที่จับต้องได้", "สร้างความยุ่งเหยิงให้เป็นงานศิลปะ", "ลดการใช้แรงงานคนให้เหลือศูนย์"],
+                answer: 1,
+                explanation: "ตามหน้าปกของเอกสาร การออกแบบเครื่องจักรกลคือ 'การเปลี่ยนความต้องการของมนุษย์ให้เป็นพิมพ์เขียวที่จับต้องได้'"
+            },
+            {
+                question: "หัวใจสำคัญที่สุดของการออกแบบเครื่องจักรกลคืออะไร?",
+                options: ["ชิ้นส่วนต้องมีความสวยงามและทันสมัย", "ต้องใช้วัสดุที่ราคาแพงที่สุดเท่านั้น", "ชิ้นส่วนต้องทำงานได้ตามหน้าที่เต็มประสิทธิภาพ โดยไม่พัง", "ต้องออกแบบให้เสร็จภายในเวลาที่กำหนด"],
+                answer: 2,
+                explanation: "หน้า 2 ระบุชัดเจนว่า หัวใจสำคัญคือ 'ชิ้นส่วนต้องทำงานได้ตามหน้าที่เต็มประสิทธิภาพ โดยไม่พังหรือเกิดความเสียหาย'"
+            },
+            {
+                question: "ศาสตร์ใดบ้างที่ต้องนำมาผสมผสานกันในการออกแบบเครื่องจักรกล?",
+                options: ["คณิตศาสตร์, วิทยาศาสตร์, วิศวกรรมศาสตร์, สถาปัตยกรรมศาสตร์", "คณิตศาสตร์, ดาราศาสตร์, วิศวกรรมศาสตร์, บริหารธุรกิจ", "วิทยาศาสตร์, สังคมศาสตร์, สถาปัตยกรรมศาสตร์, จิตวิทยา", "แพทยศาสตร์, วิทยาศาสตร์, สถาปัตยกรรมศาสตร์, นิติศาสตร์"],
+                answer: 0,
+                explanation: "หน้า 2 แสดงสมการว่า คณิตศาสตร์ + วิทยาศาสตร์ + วิศวกรรมศาสตร์ + สถาปัตยกรรมศาสตร์ และความต้องการของผู้ใช้ รวมเป็นการออกแบบเครื่องจักรกล"
+            },
+            {
+                question: "ขั้นตอนแรกสุด (ขั้นตอนที่ 1) ของกระบวนการออกแบบคืออะไร?",
+                options: ["กำหนดลักษณะจำเพาะ", "รับรู้ความต้องการ", "สังเคราะห์ความคิด", "วิเคราะห์และออกแบบ"],
+                answer: 1,
+                explanation: "หน้า 3 ระบุว่าขั้นตอนที่ 1 คือ 'รับรู้ความต้องการ' (เข้าใจปัญหาและผู้ใช้งาน)"
+            },
+            {
+                question: "การ 'แปลงปัญหาเป็นตัวเลข' อยู่ในขั้นตอนใดของการออกแบบ?",
+                options: ["ขั้นตอนที่ 1: รับรู้ความต้องการ", "ขั้นตอนที่ 2: กำหนดลักษณะจำเพาะ", "ขั้นตอนที่ 3: สังเคราะห์ความคิด", "ขั้นตอนที่ 4: วิเคราะห์และออกแบบ"],
+                answer: 1,
+                explanation: "หน้า 3 ระบุว่า ขั้นตอนที่ 2: กำหนดลักษณะจำเพาะ คือการแปลงปัญหาเป็นตัวเลข"
+            },
+            {
+                question: "ขั้นตอน 'สังเคราะห์ความคิด' มีวัตถุประสงค์หลักเพื่ออะไร?",
+                options: ["คำนวณแรงที่กระทำ", "ส่งมอบพิมพ์เขียว", "จำลองการทำงาน", "ระดมสมองและหาแนวทาง"],
+                answer: 3,
+                explanation: "หน้า 3 ระบุว่า ขั้นตอนที่ 3: สังเคราะห์ความคิด คือการ 'ระดมสมองและหาแนวทาง'"
+            },
+            {
+                question: "การคำนวณแรง เลือกวัสดุ และสร้างแบบ อยู่ในขั้นตอนใด?",
+                options: ["รับรู้ความต้องการ", "สังเคราะห์ความคิด", "วิเคราะห์และออกแบบ", "ทดสอบและประเมินผล"],
+                answer: 2,
+                explanation: "หน้า 3 ระบุว่า ขั้นตอนที่ 4: วิเคราะห์และออกแบบ คือการ 'คำนวณแรง เลือกวัสดุ สร้างแบบ'"
+            },
+            {
+                question: "ขั้นตอนที่ 5 'ทดสอบและประเมินผล' มีความสำคัญอย่างไร?",
+                options: ["เพื่อจำลองการทำงานและแก้ไขจุดบกพร่อง", "เพื่อกำหนดข้อจำกัดเชิงตัวเลข", "เพื่อส่งมอบคู่มือให้ผู้ใช้งาน", "เพื่อทำความเข้าใจปัญหาเบื้องต้น"],
+                answer: 0,
+                explanation: "หน้า 3 ระบุว่า ขั้นตอนที่ 5: ทดสอบและประเมินผล คือการ 'จำลองการทำงานและแก้ไขจุดบกพร่อง'"
+            },
+            {
+                question: "สิ่งที่ต้องส่งมอบในขั้นตอนที่ 6 'นำเสนอ' คืออะไร?",
+                options: ["ชิ้นงานต้นแบบ", "พิมพ์เขียวและคู่มือ", "รายงานการระดมสมอง", "ตัวเลขการคำนวณแรง"],
+                answer: 1,
+                explanation: "หน้า 3 ระบุว่า ขั้นตอนที่ 6: นำเสนอ คือการ 'ส่งมอบพิมพ์เขียวและคู่มือ'"
+            },
+            {
+                question: "ในกรณีศึกษาที่ 1 (เครื่องเคลือบสีบนฟัน) ปัญหาหลักที่ทันตแพทย์พบคืออะไร?",
+                options: ["ต้องการเครื่องมือทดสอบการเคลือบสีฟันจำลองจำนวนมากอย่างมีประสิทธิภาพ", "เครื่องเคลือบฟันเดิมมีราคาแพงเกินไป", "สีที่ใช้เคลือบฟันแห้งช้าเกินไป", "ไม่สามารถหาวัสดุมาทำฟันจำลองได้"],
+                answer: 0,
+                explanation: "หน้า 4 ระบุว่า ทันตแพทย์ต้องการเครื่องมือเพื่อทดสอบการเคลือบสีฟันจำลองจำนวนมากอย่างมีประสิทธิภาพ"
+            },
+            {
+                question: "ข้อใดคือการแปลงภาษาผู้ใช้ 'ต้องเคลือบฟันได้ทีละเยอะๆ' เป็นภาษาทางวิศวกรรมที่ถูกต้อง?",
+                options: ["แกนหมุนต้องทำจากสแตนเลส", "ควบคุมอุณหภูมิที่ 35-40 องศาเซลเซียส", "มอเตอร์ควบคุมรอบหมุน 2 RPM", "แกนยืดตัวอย่างฟันบนฐานอะคริลิกได้ ≥ 100 ชิ้น"],
+                answer: 3,
+                explanation: "หน้า 5 ระบุว่า 'ต้องเคลือบฟันได้ทีละเยอะๆ' แปลงเป็นข้อกำหนดว่า 'แกนยืดตัวอย่างฟันบนฐานอะคริลิกได้ ≥ 100 ชิ้น'"
+            },
+            {
+                question: "เครื่องเคลือบสีบนฟัน ต้องควบคุมอุณหภูมิความร้อนไว้ที่เท่าใดเพื่อให้ฟันแห้งสม่ำเสมอ?",
+                options: ["20-25 °C", "35-40 °C (คลาดเคลื่อน ±3 °C)", "50-60 °C", "100 °C ขึ้นไป"],
+                answer: 1,
+                explanation: "หน้า 5 ระบุข้อกำหนดเชิงตัวเลขว่า ต้องควบคุมอุณหภูมิที่ 35-40 °C (คลาดเคลื่อน ±3 °C) พร้อมหลอดไฟปรับแสงได้"
+            },
+            {
+                question: "ข้อกำหนดของความเร็วรอบมอเตอร์ในเครื่องเคลือบสีบนฟันคือเท่าใด?",
+                options: ["2 RPM", "5 RPM", "10 RPM", "50 RPM"],
+                answer: 0,
+                explanation: "หน้า 5 ระบุว่า มอเตอร์ DC ต้องควบคุมรอบหมุนที่ 2 RPM พร้อมวงจรตัดไฟ"
+            },
+            {
+                question: "วิศวกรสามารถออกแบบชิ้นงานจาก 'ความรู้สึก' ของผู้ใช้งานโดยตรงได้หรือไม่?",
+                options: ["ได้ หากวิศวกรมีประสบการณ์มากพอ", "ได้ หากผู้ใช้งานเป็นผู้เชี่ยวชาญ", "ไม่ได้ ทุกความต้องการต้องถูกแปลงเป็นตัวเลขและวัสดุก่อน", "ไม่ได้ ต้องให้สถาปนิกเป็นผู้ออกแบบเท่านั้น"],
+                answer: 2,
+                explanation: "หน้า 5 สรุปไว้ชัดเจนว่า 'วิศวกรไม่สามารถออกแบบจากความรู้สึกได้ ทุกความต้องการต้องถูกแปลงเป็นตัวเลขและวัสดุ'"
+            },
+            {
+                question: "อ่างสแตนเลสในเครื่องเคลือบสีบนฟัน มีคุณสมบัติหลักเพื่อตอบโจทย์ความต้องการใด?",
+                options: ["เพื่อให้ดูสวยงามทันสมัย", "รับประกันไม่เกิดสนิมเมื่อสัมผัสของเหลวและสารเคมี", "เพื่อกระจายความร้อนให้เร็วขึ้น", "เพื่อให้มีน้ำหนักเบา เคลื่อนย้ายง่าย"],
+                answer: 1,
+                explanation: "หน้า 4 และ 5 ระบุว่าต้องสัมผัสสารเคมีและของเหลวโดยไม่เป็นสนิม จึงกำหนดให้ใช้อ่างสแตนเลส (รับประกันไม่เกิดสนิม ≥ 1 ปี)"
+            },
+            {
+                question: "โครงสร้างทั้งหมดของเครื่องเคลือบสีบนฟัน ออกแบบมาเพื่อประสาน 3 ระบบหลัก คืออะไรบ้าง?",
+                options: ["กลศาสตร์ของไหล, ไฟฟ้าเคมี, สถาปัตยกรรม", "กลศาสตร์การหมุน, อุณหพลศาสตร์, วัสดุศาสตร์", "กลศาสตร์ควอนตัม, อุณหพลศาสตร์, คอมพิวเตอร์", "วิศวกรรมโยธา, กลศาสตร์การหมุน, จุลชีววิทยา"],
+                answer: 1,
+                explanation: "หน้า 6 ระบุว่าโครงสร้างทั้งหมดออกแบบมาเพื่อประสาน 3 ระบบ: กลศาสตร์การหมุน, อุณหพลศาสตร์ และ วัสดุศาสตร์"
+            },
+            {
+                question: "การทดสอบชิ้นงานในขั้นตอนที่ 5-6 เป็นเครื่องพิสูจน์สิ่งใด?",
+                options: ["พิสูจน์ว่าต้นทุนการผลิตต่ำที่สุด", "พิสูจน์ว่าเครื่องจักรมีความสวยงาม", "พิสูจน์ว่าข้อกำหนดที่ตั้งไว้ในกระดาษสามารถทำงานร่วมกันได้จริง", "พิสูจน์ว่าผู้ใช้สามารถซ่อมแซมได้เอง"],
+                answer: 2,
+                explanation: "หน้า 7 ระบุว่า 'การทดสอบเป็นเครื่องพิสูจน์ว่าข้อกำหนดที่ตั้งไว้ในหน้ากระดาษ สามารถทำงานร่วมกันได้จริงในสภาวะแวดล้อมจริง'"
+            },
+            {
+                question: "ในกรณีศึกษาที่ 2 (เครื่องตัดท่อ PVC) ปัญหาหลักที่ต้องแก้ไขคืออะไร?",
+                options: ["ใบมีดขึ้นสนิมบ่อย", "เครื่องมือแบบกรรไกรเดิมสร้างความเหนื่อยล้าเมื่อทำงานต่อเนื่อง", "ท่อ PVC มีความแข็งเกินไป", "การใช้ไฟฟ้าสิ้นเปลืองเกินไป"],
+                answer: 1,
+                explanation: "หน้า 8 ระบุว่า ปัญหาหลักคือ เครื่องมือตัดแบบกรรไกรเดิมสร้างความเหนื่อยล้าให้กับผู้ใช้เมื่อต้องทำงานต่อเนื่อง"
+            },
+            {
+                question: "เหตุใดทีมออกแบบจึงเปลี่ยนมาใช้ 'แรงเท้าเหยียบ' แทนแรงมือในเครื่องตัดท่อ PVC?",
+                options: ["เพราะเท้ามีความแม่นยำกว่ามือ", "เพื่อประหยัดต้นทุนการผลิต", "เพื่อใช้กล้ามเนื้อที่ใหญ่กว่า ลดความเหนื่อยล้า", "เพื่อให้เครื่องจักรดูทันสมัยขึ้น"],
+                answer: 2,
+                explanation: "หน้า 8 ระบุเป้าหมายว่า 'เปลี่ยนจากแรงมือ เป็นแรงเท้าเหยียบเพื่อใช้กล้ามเนื้อที่ใหญ่กว่า'"
+            },
+            {
+                question: "เครื่องตัดท่อ PVC แบบใหม่ ต้องการตั้งระยะความยาวในการตัดที่แม่นยำในช่วงเท่าใด?",
+                options: ["1-5 cm", "5-30 cm", "30-50 cm", "50-100 cm"],
+                answer: 1,
+                explanation: "หน้า 8 ระบุเป้าหมายว่า 'ต้องตั้งระยะตัดความยาวท่อได้แม่นยำ (5-30 cm)'"
+            },
+            {
+                question: "เพื่อเพิ่มผลผลิต เครื่องตัดท่อ PVC ถูกออกแบบให้ตัดท่อพร้อมกันได้สูงสุดกี่เส้น?",
+                options: ["1 เส้น", "2 เส้น", "3 เส้น", "4 เส้น"],
+                answer: 1,
+                explanation: "หน้า 8 ระบุเป้าหมายว่า 'ตัดท่อพร้อมกันได้สูงสุด 2 เส้น เพื่อเพิ่มผลผลิต'"
+            },
+            {
+                question: "ส่วนใดของสถาปัตยกรรมที่ทำหน้าที่ 'ตั้งตำแหน่ง' ความยาวท่อ?",
+                options: ["ใบมีดสแตนเลส", "โต๊ะรับน้ำหนัก", "ชุดเกลียวปรับระยะ", "สปริงดึงกลับ"],
+                answer: 2,
+                explanation: "หน้า 9 ระบุว่า การตั้งตำแหน่ง ต้องมี 'ชุดเกลียวปรับระยะที่ล็อคแน่นหนา'"
+            },
+            {
+                question: "ในขั้นตอนสังเคราะห์สถาปัตยกรรม 'การนำออก' (ตัดเสร็จแล้ว) ถูกออกแบบไว้อย่างไร?",
+                options: ["ใช้มอเตอร์ดึงใบมีดกลับ", "ใบมีดต้องเด้งกลับอัตโนมัติด้วยสปริง", "ผู้ใช้ต้องใช้มือดึงใบมีดขึ้นเอง", "ปล่อยให้ท่อตกลงตามแรงโน้มถ่วง"],
+                answer: 1,
+                explanation: "หน้า 9 ระบุว่า การนำออก 'ตัดเสร็จแล้วใบมีดต้องเด้งกลับอัตโนมัติด้วยสปริง'"
+            },
+            {
+                question: "จากการวิเคราะห์กลศาสตร์ ใบมีดสแตนเลส (Blade) ต้องทนทานต่อแรงประเภทใดเป็นหลัก?",
+                options: ["แรงดึง (Tension)", "แรงเฉือน (Shear)", "แรงดัด (Bending Force)", "แรงบิด (Torsion)"],
+                answer: 2,
+                explanation: "หน้า 10 ระบุว่า ใบมีดสแตนเลส ต้องทน 'แรงดัด (Bending Force)'"
+            },
+            {
+                question: "สลักยึดที่เป็นจุดหมุนหลักของเครื่องตัดท่อ ต้องออกแบบมาให้รับแรงประเภทใด?",
+                options: ["แรงเฉือน (Shear)", "แรงดึง (Tension)", "แรงดัด (Bending)", "แรงอัด (Compression)"],
+                answer: 0,
+                explanation: "หน้า 10 ระบุว่า สลักยึดจุดหมุนหลัก ต้องทน 'แรงเฉือน (Shear)'"
+            },
+            {
+                question: "คานเท้าเหยียบที่รับน้ำหนักตัวผู้ใช้งาน จะเกิดแรงประเภทใดในโครงสร้าง?",
+                options: ["แรงเฉือน (Shear)", "แรงดึง (Tension)", "แรงบิด (Torsion)", "แรงดัด (Bending)"],
+                answer: 3,
+                explanation: "หน้า 10 ระบุว่า คานเท้าเหยียบ รับ 'แรงดัด (Bending)' จากน้ำหนักตัวผู้ใช้งาน"
+            },
+            {
+                question: "แกนดึงที่เชื่อมต่อกับคานเท้าเหยียบ ต้องออกแบบเพื่อรับแรงประเภทใด?",
+                options: ["แรงดึง (Tension)", "แรงอัด (Compression)", "แรงเฉือน (Shear)", "แรงดัด (Bending)"],
+                answer: 0,
+                explanation: "หน้า 10 ระบุว่า แกนดึง รับ 'แรงดึง (Tension)' จากคานเท้าเหยียบ"
+            },
+            {
+                question: "วิศวกรคำนวณวัสดุและขนาดของเครื่องตัดท่อ ย้อนกลับมาจากแรงต้านของท่อ PVC ที่มีค่าเท่าใด?",
+                options: ["100 N", "250 N", "500 N", "1000 N"],
+                answer: 1,
+                explanation: "หน้า 10 ระบุว่า แรงต้านท่อ PVC = 250 N และวัสดุไม่ได้ถูกสุ่มเลือก แต่ถูกคำนวณย้อนกลับมาจากแรง 250 N นี้"
+            },
+            {
+                question: "การจำลองการเคลื่อนที่และกลศาสตร์ (Simulation) มีประโยชน์อย่างไรในการออกแบบ?",
+                options: ["ทำให้แบบดูสวยงามเวลาเสนอขาย", "ช่วยลดข้อผิดพลาดก่อนการสร้างชิ้นงานจริง", "ลดความจำเป็นในการคำนวณแรง", "เพิ่มความยุ่งยากให้กระบวนการทำงาน"],
+                answer: 1,
+                explanation: "หน้า 11 ระบุชัดเจนว่า 'การจำลองช่วยลดข้อผิดพลาดก่อนการสร้างชิ้นงานจริง และสามารถนำไปจัดทำคู่มือผู้ใช้ได้ทันที'"
+            },
+            {
+                question: "เครื่องตัดท่อ PVC มีเป้าหมายหนึ่งคือ 'มือทั้งสองข้างต้องว่าง' เพื่อจุดประสงค์ใด?",
+                options: ["เพื่อความปลอดภัย ไม่ให้มือโดนใบมีด", "เพื่อให้ผู้ใช้สามารถดื่มน้ำขณะทำงานได้", "เพื่อให้มือว่างสำหรับจับชิ้นงาน (ท่อ)", "เพื่อลดความเหนื่อยล้าของไหล่"],
+                answer: 2,
+                explanation: "หน้า 8 ระบุเป้าหมายว่า 'มือทั้งสองข้างต้องว่างเพื่อจับชิ้นงาน'"
+            }
+        ];
+
+        // ตัวแปรเก็บสถานะของแอป
+        let currentQuestionIndex = 0;
+        let userAnswers = new Array(quizData.length).fill(null);
+        let score = 0;
+
+        // อ้างอิง Element
+        const appContainer = document.getElementById('app');
+
+        // ฟังก์ชั่นเริ่มโปรแกรม
+        function init() {
+            renderStartScreen();
+        }
+
+        // หน้าเริ่มแบบทดสอบ
+        function renderStartScreen() {
+            appContainer.innerHTML = `
+                <div class="p-8 md:p-12 text-center fade-in">
+                    <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                    </div>
+                    <h1 class="text-2xl md:text-3xl font-bold text-slate-800 mb-4">แบบทดสอบที่ 1: แนวคิดการออกแบบเครื่องจักรกล</h1>
+                    <p class="text-slate-600 mb-8 leading-relaxed">บททดสอบปรนัย 4 ตัวเลือก จำนวน ${quizData.length} ข้อ<br>เนื้อหาจากเอกสาร "จากความยุ่งเหยิงสู่ฟังก์ชันการใช้งาน"</p>
+                    <button onclick="startQuiz()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1">
+                        เริ่มทำแบบทดสอบ
+                    </button>
+                </div>
+            `;
+        }
+
+        function startQuiz() {
+            currentQuestionIndex = 0;
+            userAnswers = new Array(quizData.length).fill(null);
+            score = 0;
+            renderQuestion();
+        }
+
+        // หน้าแสดงคำถาม
+        function renderQuestion() {
+            const data = quizData[currentQuestionIndex];
+            const hasAnswered = userAnswers[currentQuestionIndex] !== null;
+            const selectedIdx = userAnswers[currentQuestionIndex];
+            const progressPct = ((currentQuestionIndex) / quizData.length) * 100;
+
+            let optionsHtml = '';
+            data.options.forEach((opt, idx) => {
+                let btnStyle = "bg-white border-slate-200 text-slate-700 hover:border-blue-500 hover:bg-blue-50";
+                
+                // หากตอบแล้ว ให้เปลี่ยนสไตล์ปุ่ม
+                if (hasAnswered) {
+                    if (idx === data.answer) {
+                        // ข้อที่ถูก
+                        btnStyle = "bg-green-100 border-green-500 text-green-800 font-medium";
+                    } else if (idx === selectedIdx && selectedIdx !== data.answer) {
+                        // ข้อที่เลือกแต่ผิด
+                        btnStyle = "bg-red-100 border-red-500 text-red-800 opacity-70";
+                    } else {
+                        // ข้ออื่นๆ
+                        btnStyle = "bg-white border-slate-200 text-slate-400 opacity-50";
+                    }
+                }
+
+                optionsHtml += `
+                    <button 
+                        onclick="selectOption(${idx})" 
+                        ${hasAnswered ? 'disabled' : ''} 
+                        class="option-btn w-full text-left p-4 border-2 rounded-xl mb-3 ${btnStyle} ${hasAnswered ? 'cursor-default' : 'cursor-pointer'}">
+                        <div class="flex items-center">
+                            <span class="w-8 h-8 flex-shrink-0 rounded-full flex items-center justify-center border-2 mr-3 ${hasAnswered && idx === data.answer ? 'border-green-500 bg-green-500 text-white' : 'border-slate-300'}">${String.fromCharCode(65 + idx)}</span>
+                            <span>${opt}</span>
+                        </div>
+                    </button>
+                `;
+            });
+
+            // ส่วนแสดงคำอธิบาย (จะแสดงเมื่อตอบแล้ว)
+            let feedbackHtml = '';
+            if (hasAnswered) {
+                const isCorrect = selectedIdx === data.answer;
+                feedbackHtml = `
+                    <div class="mt-6 p-5 rounded-xl ${isCorrect ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'} fade-in">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 mt-0.5">
+                                ${isCorrect 
+                                    ? '<svg class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>' 
+                                    : '<svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>'}
+                            </div>
+                            <div class="ml-3">
+                                <h3 class="text-sm font-bold ${isCorrect ? 'text-green-800' : 'text-red-800'}">
+                                    ${isCorrect ? 'ถูกต้อง!' : 'ยังไม่ถูกต้อง'}
+                                </h3>
+                                <div class="mt-2 text-sm text-slate-700 leading-relaxed">
+                                    <strong>คำอธิบาย:</strong> ${data.explanation}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            appContainer.innerHTML = `
+                <!-- Progress Bar -->
+                <div class="w-full bg-slate-100 h-1.5">
+                    <div class="bg-blue-500 h-1.5 transition-all duration-300" style="width: ${progressPct}%"></div>
+                </div>
+                
+                <div class="p-6 md:p-8 fade-in">
+                    <div class="flex justify-between items-center mb-6">
+                        <span class="text-xs font-bold tracking-wider text-blue-600 uppercase bg-blue-100 py-1 px-3 rounded-full">ข้อที่ ${currentQuestionIndex + 1} / ${quizData.length}</span>
+                    </div>
+                    
+                    <h2 class="text-lg md:text-xl font-semibold text-slate-800 mb-6 leading-relaxed">
+                        ${data.question}
+                    </h2>
+                    
+                    <div class="space-y-2">
+                        ${optionsHtml}
+                    </div>
+
+                    ${feedbackHtml}
+
+                    <div class="mt-8 flex justify-between items-center pt-6 border-t border-slate-100">
+                        <button onclick="prevQuestion()" class="${currentQuestionIndex === 0 ? 'invisible' : ''} flex items-center text-slate-500 hover:text-slate-800 font-medium px-4 py-2 rounded-lg hover:bg-slate-100 transition">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+                            ย้อนกลับ
+                        </button>
+                        
+                        ${hasAnswered ? `
+                            <button onclick="nextQuestion()" class="flex items-center bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2.5 rounded-xl shadow-md transition">
+                                ${currentQuestionIndex === quizData.length - 1 ? 'ดูผลคะแนน' : 'ข้อถัดไป'}
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                            </button>
+                        ` : `
+                            <div class="text-sm text-slate-400 italic">กรุณาเลือกคำตอบ</div>
+                        `}
+                    </div>
+                </div>
+            `;
+        }
+
+        // ฟังก์ชั่นเมื่อผู้ใช้เลือกคำตอบ
+        function selectOption(selectedIndex) {
+            if (userAnswers[currentQuestionIndex] !== null) return; // กันกดซ้ำ
+            
+            userAnswers[currentQuestionIndex] = selectedIndex;
+            
+            if (selectedIndex === quizData[currentQuestionIndex].answer) {
+                score++;
+            }
+            
+            renderQuestion(); // รีเรนเดอร์เพื่อโชว์เฉลยและคำอธิบาย
+        }
+
+        // ไปข้อถัดไป
+        function nextQuestion() {
+            if (currentQuestionIndex < quizData.length - 1) {
+                currentQuestionIndex++;
+                renderQuestion();
+            } else {
+                renderResultScreen();
+            }
+        }
+
+        // ย้อนกลับ
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                renderQuestion();
+            }
+        }
+
+        // หน้าแสดงผลลัพธ์
+        function renderResultScreen() {
+            const percentage = Math.round((score / quizData.length) * 100);
+            let message = "";
+            let icon = "";
+            
+            if (percentage >= 80) {
+                message = "ยอดเยี่ยมมาก! คุณเข้าใจแนวคิดการออกแบบเครื่องจักรกลเป็นอย่างดี";
+                icon = '<svg class="h-16 w-16 text-green-500 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>';
+            } else if (percentage >= 50) {
+                message = "ทำได้ดี! แต่ยังสามารถทบทวนเนื้อหาเพิ่มเติมได้อีกนิด";
+                icon = '<svg class="h-16 w-16 text-yellow-500 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>';
+            } else {
+                message = "พยายามเข้านะ! แนะนำให้อ่านทบทวนเอกสารอีกครั้ง";
+                icon = '<svg class="h-16 w-16 text-red-400 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>';
+            }
+
+            appContainer.innerHTML = `
+                <div class="p-8 md:p-12 text-center fade-in">
+                    <div class="mb-6">
+                        ${icon}
+                    </div>
+                    <h2 class="text-3xl font-bold text-slate-800 mb-2">ผลการทดสอบ</h2>
+                    <p class="text-slate-600 mb-8">${message}</p>
+                    
+                    <div class="bg-slate-50 rounded-2xl p-6 mb-8 border border-slate-100">
+                        <div class="text-5xl font-extrabold text-blue-600 mb-2">${score} <span class="text-2xl text-slate-400">/ ${quizData.length}</span></div>
+                        <div class="text-sm text-slate-500 font-medium">คิดเป็น ${percentage}%</div>
+                    </div>
+                    
+                    <button onclick="startQuiz()" class="flex items-center justify-center mx-auto bg-slate-800 hover:bg-slate-900 text-white font-medium py-3 px-8 rounded-full transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                        ทำแบบทดสอบอีกครั้ง
+                    </button>
+                </div>
+            `;
+        }
+
+        // เริ่มต้นแอป
+        init();
+    </script>
+</body>
+</html>
